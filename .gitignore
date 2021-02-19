@@ -39,3 +39,6 @@ bin
 out
 *.bin
 *.abi
+
+# versions
+/versions/

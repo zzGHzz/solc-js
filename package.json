@@ -1,10 +1,11 @@
 {
-  "name": "solc",
+  "name": "solc-version-control",
   "version": "0.8.1",
   "description": "Solidity compiler",
   "main": "index.js",
   "bin": {
-    "solcjs": "solcjs"
+    "solcjs": "solcjs",
+    "solcver": "cli.js"
   },
   "scripts": {
     "lint": "node ./node_modules/semistandard/bin/cmd.js",
@@ -16,12 +17,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ethereum/solc-js.git"
+    "url": "git+https://github.com/zzGHzz/solc-js.git"
   },
   "keywords": [
     "ethereum",
     "solidity",
-    "compiler"
+    "compiler",
+	"version control"
   ],
   "engines": {
     "node": ">=8.0.0"
@@ -37,22 +39,22 @@
     "translate.js",
     "wrapper.js"
   ],
-  "author": "chriseth",
+  "author": "Peter Zhou",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ethereum/solc-js/issues"
+    "url": "https://github.com/zzGHzz/solc-js/issues"
   },
-  "homepage": "https://github.com/ethereum/solc-js#readme",
+  "homepage": "https://github.com/zzGHzz/solc-js#readme",
   "dependencies": {
     "command-exists": "^1.2.8",
     "commander": "3.0.2",
+    "follow-redirects": "^1.12.1",
     "fs-extra": "^0.30.0",
     "js-sha3": "0.8.0",
     "memorystream": "^0.3.1",
     "require-from-string": "^2.0.0",
     "semver": "^5.5.0",
-    "tmp": "0.0.33",
-    "follow-redirects": "^1.12.1"
+    "tmp": "0.0.33"
   },
   "devDependencies": {
     "coveralls": "^3.0.0",
@@ -63,12 +65,14 @@
   },
   "semistandard": {
     "ignore": [
-      "soljson.js"
+      "soljson.js",
+	  "versions/*.*"
     ]
   },
   "nyc": {
     "exclude": [
-      "soljson.js"
+      "soljson.js",
+	  "versions/*.*"	
     ]
   }
 }
