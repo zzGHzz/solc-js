@@ -13,14 +13,18 @@ program
 	.option('-d, --download <version>', 'Download the chosen version of solidity');
 program.parse(process.argv);
 
+function abort(msg) {
+	console.error(msg || 'Error occured');
+	process.exit(1);
+}
+
 function getVersionList(cb) {
 	console.log('Retrieving available version list...');
 
 	var mem = new MemoryStream(null, { readable: false });
 	https.get('https://solc-bin.ethereum.org/bin/list.json', function (response) {
 		if (response.statusCode !== 200) {
-			console.log('Error downloading file: ' + response.statusCode);
-			process.exit(1);
+			abort('Error downloading file: ' + response.statusCode);
 		}
 		response.pipe(mem);
 		response.on('end', function () {
@@ -38,24 +42,21 @@ function downloadBinary(outputName, version, expectedHash) {
 	}
 
 	process.on('SIGINT', function () {
-		console.log('Interrupted, removing file.');
 		fs.unlinkSync(outputName);
-		process.exit(1);
+		abort('Interrupted, removing file.');
 	});
 
 	var file = fs.createWriteStream(outputName, { encoding: 'binary' });
 	https.get('https://solc-bin.ethereum.org/bin/' + version, function (response) {
 		if (response.statusCode !== 200) {
-			console.log('Error downloading file: ' + response.statusCode);
-			process.exit(1);
+			abort('Error downloading file: ' + response.statusCode);
 		}
 		response.pipe(file);
 		file.on('finish', function () {
 			file.close(function () {
 				var hash = '0x' + keccak256(fs.readFileSync(outputName, { encoding: 'binary' }));
 				if (expectedHash !== hash) {
-					console.log('Hash mismatch: ' + expectedHash + ' vs ' + hash);
-					process.exit(1);
+					abort('Hash mismatch: ' + expectedHash + ' vs ' + hash);
 				}
 				console.log('Done.');
 			});
@@ -65,8 +66,7 @@ function downloadBinary(outputName, version, expectedHash) {
 
 if (program.download) {
 	if (program.download.match(/^(\d+\.\d+\.\d+)$/) === null) {
-		console.log('Invalid version number');
-		process.exit(1)
+		abort('Invalid version number');
 	}
 
 	var wanted = program.download;
@@ -76,15 +76,13 @@ if (program.download) {
 		var releaseFileName = list.releases[wanted];
 		var expectedFile = list.builds.filter(function (entry) { return entry.path === releaseFileName; })[0];
 		if (!expectedFile) {
-			console.log('Version not found');
-			process.exit(1);
+			abort(`Version ${wanted} not found`);
 		}
 		var expectedHash = expectedFile.keccak256;
 
 		var pkgDir = './node_modules/' + package.name;
 		if (!fs.existsSync(pkgDir)) {
-			console.log('Package directory not found.');
-			process.exit(1);
+			abort('Package directory not found.');
 		}
 
 		var verDir = pkgDir + '/versions/'
@@ -94,8 +92,7 @@ if (program.download) {
 
 		var file = verDir + releaseFileName;
 		if (fs.existsSync(file)) {
-			console.log(`Version ${wanted} already downloaded.`);
-			process.exit(1);
+			abort(`Version ${wanted} already downloaded.`);
 		}
 
 		downloadBinary(file, releaseFileName, expectedHash);
@@ -104,8 +101,7 @@ if (program.download) {
 
 if (program.use) {
 	if (program.use.match(/^(\d+\.\d+\.\d+)$/) === null) {
-		console.log('Invalid version number');
-		process.exit(1)
+		abort('Invalid version number');
 	}
 
 	var wanted = program.use;
@@ -113,8 +109,8 @@ if (program.use) {
 	var pkgDir = './node_modules/' + package.name;
 	var verDir = pkgDir + '/versions/';
 	if (!fs.existsSync(verDir)) {
-		console.log('Directory storing solc versions not found.');
-		process.exit(1);
+		abort(`Version ${wanted} not found. To download the version, use command
+  solcver --download <VERSION>`);
 	}
 
 	var isFileExist = false;
@@ -122,16 +118,17 @@ if (program.use) {
 		if (file.includes(wanted)) {
 			isFileExist = true;
 			fs.copyFile(verDir + file, pkgDir + '/soljson.js', (err) => {
-				if (err) 
-					console.log(`Version ${wanted} not found.`);
+				if (err)
+					abort(`Version ${wanted} not found. To download the version, use command
+  solcver --download <VERSION>`);
 				else
 					console.log(`Version ${wanted} loaded.`);
-				process.exit(1);
 			});
 		}
 	});
 
 	if (!isFileExist) {
-		console.log('Version not found. Please download first')
+		abort(`Version ${wanted} not found. To download the version, use command
+  solcver --download <VERSION>`)
 	}
 }
