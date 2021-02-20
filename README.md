@@ -1,20 +1,26 @@
 # solc-js with Version Controll
 
-## Installation
+## Node.js Usage
+
+To install the package:
+
 ```bash
-npm install solc-version-control
+npm install @pzzh/solc
 ```
 
-## Usage
-To download a compiler version
+To download a compiler version:
+
 ```bash
-solcver -d <version>
+./node_module/.bin/solcver --download | -d <VERSION>
 ```
 
-To use a compiler version
+To use a compiler version:
+
 ```bash
-solcver -u <version>
+./node_module/.bin/solcver --use | -u <VERSION>
 ``` 
+
+Comand `solcver` is available for direct use if the package is installed globally (`npm install -g @pzzh/solc`).
 
 [![Build Status](https://img.shields.io/travis/ethereum/solc-js.svg?branch=master&style=flat-square)](https://travis-ci.org/ethereum/solc-js)
 [![CircleCI](https://img.shields.io/circleci/project/github/ethereum/solc-js/master.svg?style=flat-square)](https://circleci.com/gh/ethereum/solc-js/tree/master)
