@@ -5,6 +5,13 @@ var originalUncaughtExceptionListeners = process.listeners("uncaughtException");
 
 var fs = require('fs-extra');
 var path = require('path');
+var package = require('./package.json');
+
+if (!fs.existsSync('./node_modules/' + package.name + '/soljson.js')) {
+	console.error('solc file not found.');
+	process.exit(1);
+}
+
 var solc = require('./index.js');
 var smtchecker = require('./smtchecker.js');
 var smtsolver = require('./smtsolver.js');
