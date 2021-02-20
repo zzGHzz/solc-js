@@ -5,6 +5,7 @@ var https = require('follow-redirects').https;
 var MemoryStream = require('memorystream');
 var keccak256 = require('js-sha3').keccak256;
 var commander = require('commander');
+var package = require('./package.json');
 
 var program = new commander.Command();
 program
@@ -80,12 +81,18 @@ if (program.download) {
 		}
 		var expectedHash = expectedFile.keccak256;
 
-		var dir = './versions/'
-		if (!fs.existsSync(dir)) {
-			fs.mkdirSync(dir);
+		var pkgDir = './node_modules/' + package.name;
+		if (!fs.existsSync(pkgDir)) {
+			console.log('Package directory not found.');
+			process.exit(1);
 		}
 
-		var file = './versions/' + releaseFileName;
+		var verDir = pkgDir + '/versions/'
+		if (!fs.existsSync(verDir)) {
+			fs.mkdirSync(verDir);
+		}
+
+		var file = verDir + releaseFileName;
 		if (fs.existsSync(file)) {
 			console.log(`Version ${wanted} already downloaded.`);
 			process.exit(1);
@@ -103,16 +110,23 @@ if (program.use) {
 
 	var wanted = program.use;
 
-	var dir = './versions/';
+	var pkgDir = './node_modules/' + package.name;
+	var verDir = pkgDir + '/versions/';
+	if (!fs.existsSync(verDir)) {
+		console.log('Directory storing solc versions not found.');
+		process.exit(1);
+	}
+
 	var isFileExist = false;
-	fs.readdirSync(dir).forEach(file => {
+	fs.readdirSync(verDir).forEach(file => {
 		if (file.includes(wanted)) {
 			isFileExist = true;
-			fs.copyFile('./versions/' + file, './soljson.js', (err) => {
-				if (err)
-					console.log(err);
+			fs.copyFile(verDir + file, pkgDir + '/soljson.js', (err) => {
+				if (err) 
+					console.log(`Version ${wanted} not found.`);
 				else
-					console.log(`Version ${wanted} loaded.`)
+					console.log(`Version ${wanted} loaded.`);
+				process.exit(1);
 			});
 		}
 	});
