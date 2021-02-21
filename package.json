@@ -36,7 +36,8 @@
 		"solcjs",
 		"translate.js",
 		"wrapper.js",
-		"cli.js"
+		"cli.js",
+		"utils.js"
 	],
 	"author": "Peter Zhou",
 	"license": "MIT",

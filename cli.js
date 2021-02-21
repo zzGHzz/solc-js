@@ -5,7 +5,9 @@ var https = require('follow-redirects').https;
 var MemoryStream = require('memorystream');
 var keccak256 = require('js-sha3').keccak256;
 var commander = require('commander');
-var package = require('./package.json');
+var path = require('path');
+
+var utils = require('./utils.js');
 
 var program = new commander.Command();
 program
@@ -80,17 +82,18 @@ if (program.download) {
 		}
 		var expectedHash = expectedFile.keccak256;
 
-		var pkgDir = './node_modules/' + package.name;
-		if (!fs.existsSync(pkgDir)) {
+		// var pkgDir = './node_modules/' + package.name;
+		var pkgDir = utils.getPackagePath();
+		if (!pkgDir) {
 			abort('Package directory not found.');
 		}
 
-		var verDir = pkgDir + '/versions/'
+		var verDir = path.join(pkgDir, 'versions')
 		if (!fs.existsSync(verDir)) {
 			fs.mkdirSync(verDir);
 		}
 
-		var file = verDir + releaseFileName;
+		var file = path.join(verDir, releaseFileName);
 		if (fs.existsSync(file)) {
 			abort(`Version ${wanted} already downloaded.`);
 		}
@@ -106,8 +109,13 @@ if (program.use) {
 
 	var wanted = program.use;
 
-	var pkgDir = './node_modules/' + package.name;
-	var verDir = pkgDir + '/versions/';
+	// var pkgDir = './node_modules/' + package.name;
+	var pkgDir = utils.getPackagePath();
+	if (!pkgDir) {
+		abort('Package not found.');
+	}
+
+	var verDir = path.join(pkgDir, 'versions');
 	if (!fs.existsSync(verDir)) {
 		abort(`Version ${wanted} not found. To download the version, use command
   solcver --download <VERSION>`);
@@ -117,7 +125,7 @@ if (program.use) {
 	fs.readdirSync(verDir).forEach(file => {
 		if (file.includes(wanted)) {
 			isFileExist = true;
-			fs.copyFile(verDir + file, pkgDir + '/soljson.js', (err) => {
+			fs.copyFile(path.join(verDir, file), path.join(pkgDir, 'soljson.js'), (err) => {
 				if (err)
 					abort(`Version ${wanted} not found. To download the version, use command
   solcver --download <VERSION>`);
