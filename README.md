@@ -11,13 +11,13 @@ npm install @pzzh/solc
 To download a compiler version:
 
 ```bash
-./node_module/.bin/solcver --download | -d <VERSION>
+/path/to/proj/node_module/.bin/solcver --download | -d <VERSION>
 ```
 
 To use a compiler version:
 
 ```bash
-./node_module/.bin/solcver --use | -u <VERSION>
+/path/to/proj/node_module/.bin/solcver --use | -u <VERSION>
 ``` 
 
 Comand `solcver` is available for direct use if the package is installed globally (`npm install -g @pzzh/solc`).
