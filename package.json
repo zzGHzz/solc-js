@@ -37,7 +37,8 @@
 		"translate.js",
 		"wrapper.js",
 		"cli.js",
-		"utils.js"
+		"utils.js",
+		"index.d.ts"
 	],
 	"author": "Peter Zhou",
 	"license": "MIT",
