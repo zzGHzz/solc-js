@@ -12,7 +12,8 @@
 		"pretest": "npm run lint",
 		"test": "tape ./test/index.js",
 		"coverage": "node ./node_modules/nyc/bin/nyc.js --reporter=lcov --reporter=text-summary ./node_modules/tape/bin/tape ./test/index.js",
-		"coveralls": "npm run coverage && node ./node_modules/coveralls/bin/coveralls.js <coverage/lcov.info"
+		"coveralls": "npm run coverage && node ./node_modules/coveralls/bin/coveralls.js <coverage/lcov.info",
+		"postinstall": "node ./cli.js --latest"
 	},
 	"repository": {
 		"type": "git",
