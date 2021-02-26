@@ -170,7 +170,7 @@ if (program.use) {
   solcver --download <VERSION>`);
 	}
 
-	console.log(verDir);
+	// console.log(verDir);
 
 	var wanted = program.use;
 	if (wanted === 'newest') {
@@ -188,7 +188,7 @@ if (program.use) {
 		})
 	}
 
-	console.log(`wanted = ${wanted}`)
+	// console.log(`wanted = ${wanted}`)
 
 	var isFileExist = false;
 	fs.readdirSync(verDir).forEach(file => {
